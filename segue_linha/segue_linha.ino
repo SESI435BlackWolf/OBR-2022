@@ -2,6 +2,27 @@
 #define PRETO 0
 #define BRANCO 1
 
+byte buzzer_pino = 2;
+
+void tocar (bool musica) {
+    if (musica) {
+        for (int hz = 1400; hz >= 700; hz -= 100) {
+            tone(buzzer_pino, hz, 200);
+            delay(250);
+            noTone(buzzer_pino);
+        }
+        delay(100);
+    }
+    else {
+        for (byte x = 0; x < 3; x ++) {
+            tone(buzzer_pino, 500, 300);
+            delay(400);
+            tone(buzzer_pino, 3000, 300);
+            delay(400);
+        }
+    }
+    noTone(buzzer_pino);
+}
 
 class Sensor {
   public:
@@ -51,6 +72,7 @@ Sensor sensorEsquerda(2);
 Sensor sensorExEsquerda(3);
 
 void calibrar() {
+  tocar(1);
   Serial.println("========================================");
   Serial.println("Coloque todos os sensores na cor BRANCA");
   delay(5000);
@@ -67,10 +89,14 @@ void calibrar() {
     media_brancoE  += analogRead( sensorEsquerda.pinoEntrada   );
     media_brancoEE += analogRead( sensorExEsquerda.pinoEntrada );
   }
-
+  
+  tocar(0);
+  delay(1000);
+  tocar(1);
   Serial.println("========================================");
   Serial.println("Coloque todos os sensores na cor PRETA");
   delay(5000);
+  
 
   // Calibragem Preto
   unsigned long media_pretoD  = 0;
@@ -84,6 +110,7 @@ void calibrar() {
     media_pretoE  += analogRead( sensorEsquerda.pinoEntrada   );
     media_pretoEE += analogRead( sensorExEsquerda.pinoEntrada );
   }
+  tocar(0);
 
   sensorDireita.threshold    = round( (media_brancoD  + media_pretoD  ) / (NTESTES * 2));
   sensorExDireita.threshold  = round( (media_brancoDD + media_pretoDD ) / (NTESTES * 2));
@@ -101,7 +128,10 @@ void setup() {
   Serial.begin(9600);
 
   pinMode(53, OUTPUT);
+  pinMode(buzzer_pino,OUTPUT);
+  pinMode(5, OUTPUT);
   digitalWrite(53, HIGH);
+  digitalWrite(5, LOW);
 
   calibrar();
 }
