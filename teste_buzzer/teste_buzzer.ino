@@ -4,17 +4,17 @@ void tocar (bool musica) {
     if (musica) {
         for (byte x = 0; x < 6; x ++) {
             tone(buzzer_pino, 500, 250);
-            delay(300);
+            delay(350);
             tone(buzzer_pino, 4500, 250);
-            delay(300);
+            delay(350);
         }
     }
     else {
         for (byte x = 0; x < 3; x ++) {
             tone(buzzer_pino, 500, 300);
-            delay(350);
+            delay(400);
             tone(buzzer_pino, 4500, 300);
-            delay(350);
+            delay(400);
         }
         noTone(buzzer_pino);
     }
