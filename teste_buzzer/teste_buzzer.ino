@@ -12,13 +12,13 @@ void tocar (bool musica) {
     else {
         for (byte x = 0; x < 3; x ++) {
             tone(buzzer_pino, 500, 300);
+<<<<<<< HEAD
             delay(400);
             tone(buzzer_pino, 4500, 300);
             delay(400);
+            tone(buzzer_pino, 4500, 300);
+>>>>>>> 9d6730e5b330fc1db534e1aeff3d9eff5225784e
         }
-        noTone(buzzer_pino);
-    }
-}
 
 void setup() {
     // put your setup code here, to run once:
