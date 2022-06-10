@@ -2,22 +2,21 @@ byte buzzer_pino = 11;
 
 void tocar (bool musica) {
     if (musica) {
-        for (byte x = 0; x < 6; x ++) {
-            tone(buzzer_pino, 500, 250);
-            delay(350);
-            tone(buzzer_pino, 4500, 250);
-            delay(350);
+        for (int hz = 2000; hz >= 700; hz -= 100) {
+            tone(buzzer_pino, hz);
+            delay(100);
         }
+        delay(100);
     }
     else {
         for (byte x = 0; x < 3; x ++) {
             tone(buzzer_pino, 500, 300);
             delay(400);
-            tone(buzzer_pino, 4500, 300);
+            tone(buzzer_pino, 3000, 300);
             delay(400);
         }
-        noTone(buzzer_pino);
     }
+    noTone(buzzer_pino);
 }
 
 void setup() {
