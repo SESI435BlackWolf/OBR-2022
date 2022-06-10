@@ -155,7 +155,6 @@ void loop() {
     bool leituraXD = sensorExDireita.ler();
     bool leituraXE = sensorExEsquerda.ler();
 
-    // else {
     if (leituraD == PRETO and leituraE == PRETO) {
         motorDireita.ligar(LOW, HIGH, VELOCIDADE);
         motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
