@@ -85,7 +85,7 @@ MPU6050 mpu6050(Wire);
 
 void calibrar() {
     Serial.println("========================================");
-    Serial.println("Coloque todos os sensores na cor BRANCA\n...");
+    Serial.println("Coloque todos os sensores na cor BRANCA\n");
     
     tocar(1);
     delay(2000);
@@ -107,7 +107,7 @@ void calibrar() {
     delay(2000);
 
     Serial.println("========================================");
-    Serial.println("Coloque todos os sensores na cor PRETA\n...");
+    Serial.println("Coloque todos os sensores na cor PRETA\n");
     
     tocar(1);
     delay(2000);
@@ -166,6 +166,8 @@ void girar (bool direcao, int angulo, bool debug) {
         }
       
     } while (true);
+
+    Wire.end();
 }
 
 void setup() {
@@ -204,12 +206,8 @@ void loop() {
 }
 
 void mostrar_leituras (byte lxd, byte ld, byte le, byte lxe) {
-    Serial.print("ExD: ");
-    Serial.print(lxd);
-    Serial.print("\tD: ");
-    Serial.print(ld);
-    Serial.print("\tE: ");
-    Serial.print(le);
-    Serial.print("\tExE: ");
-    Serial.println(lxe);
+    Serial.print( "ExD: " ); Serial.print  (lxd);
+    Serial.print( "\tD: " ); Serial.print  (ld);
+    Serial.print( "\tE: " ); Serial.print  (le);
+    Serial.print("\tExE: "); Serial.println(lxe);
 }
