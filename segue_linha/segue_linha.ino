@@ -1,12 +1,18 @@
-#define NTESTES 125
-#define PRETO 0
-#define BRANCO 1
-#define VELOCIDADE 90
+#include <MPU6050_tockn.h>
+#include <Wire.h>
+
+
+#define ESQUERDA   0
+#define DIREITA    1
+#define PRETO      0
+#define BRANCO     1
+
+#define NTESTES    125
+#define VELOCIDADE 120
+#define VEL_GIRO   90
 
 
 byte buzzer_pino = 2;
-byte vcc[1] = {53};
-byte gnd[1] = {5};
 
 void tocar (bool musica) {
     if (musica) {
@@ -38,7 +44,7 @@ class Sensor {
             this->threshold = 0;
         }
 
-        bool ler() {
+        byte ler() {
             return (analogRead(this->pinoEntrada) > this->threshold);
         }
 };
@@ -51,8 +57,8 @@ class Motor {
 
     public:
         Motor(byte pP, byte pB, byte pC) {
-            this->pinoPreto = pP;
-            this->pinoBranco = pB;
+            this->pinoPreto    = pP;
+            this->pinoBranco   = pB;
             this->pinoControle = pC;
 
             pinMode(this->pinoPreto, OUTPUT);
@@ -67,20 +73,22 @@ class Motor {
         }
 };
 
-Motor motorDireita(22, 23, 13);
+Motor motorDireita (22, 23, 13);
 Motor motorEsquerda(24, 25, 12);
 
-Sensor sensorExDireita(0);
-Sensor sensorDireita(1);
-Sensor sensorEsquerda(2);
-Sensor sensorExEsquerda(3);
+Sensor sensorExDireita (A0);
+Sensor sensorDireita   (A1);
+Sensor sensorEsquerda  (A2);
+Sensor sensorExEsquerda(A3);
+
+MPU6050 mpu6050(Wire);
 
 void calibrar() {
-    tocar(1);
-
     Serial.println("========================================");
-    Serial.println("Coloque todos os sensores na cor BRANCA");
-    delay(5000);
+    Serial.println("Coloque todos os sensores na cor BRANCA\n");
+    
+    tocar(1);
+    delay(2000);
 
     // Calibragem Branco
     unsigned long media_brancoD  = 0;
@@ -96,12 +104,13 @@ void calibrar() {
     }
 
     tocar(0);
-    delay(1000);
-    tocar(1);
+    delay(2000);
 
     Serial.println("========================================");
-    Serial.println("Coloque todos os sensores na cor PRETA");
-    delay(5000);
+    Serial.println("Coloque todos os sensores na cor PRETA\n");
+    
+    tocar(1);
+    delay(2000);
 
 
     // Calibragem Preto
@@ -122,26 +131,47 @@ void calibrar() {
     sensorEsquerda.threshold   = round( (media_brancoE  + media_pretoE  ) / (NTESTES * 2));
     sensorExEsquerda.threshold = round( (media_brancoEE + media_pretoEE ) / (NTESTES * 2));
 
-    tocar(0);
     Serial.println("========================================");
     Serial.println("Sensor Direita     | " + String(sensorDireita.threshold));
     Serial.println("Sensor Ex Direita  | " + String(sensorExDireita.threshold));
     Serial.println("Sensor Esquerda    | " + String(sensorEsquerda.threshold));
     Serial.println("Sensor Ex Esquerda | " + String(sensorExEsquerda.threshold));
+    Serial.println("========================================");
+    tocar(0);
+}
+
+void girar (bool direcao, int angulo, bool debug) {
+    motorDireita.ligar (LOW, LOW, 0);
+    motorEsquerda.ligar(LOW, LOW, 0);
+    
+    Wire.begin();
+    mpu6050.begin();
+    mpu6050.calcGyroOffsets(false);
+
+    do {
+        mpu6050.update();
+        int leitura = abs(round(mpu6050.getAngleZ()));
+        
+        if (debug) { Serial.println("Ang º: " + String(leitura) ); }
+        
+        if ((angulo - 1) < leitura < (angulo + 1)) {
+            break;
+        }
+        else if (direcao == DIREITA) {
+          motorDireita.ligar (HIGH, LOW, VEL_GIRO);
+          motorEsquerda.ligar(LOW, HIGH, VEL_GIRO);
+        } else {
+          motorDireita.ligar (LOW, HIGH, VEL_GIRO);
+          motorEsquerda.ligar(HIGH, LOW, VEL_GIRO);
+        }
+      
+    } while (true);
+
+    Wire.end();
 }
 
 void setup() {
     Serial.begin(9600);
-
-    for (byte x = 0; x < sizeof(vcc); x ++) {
-        pinMode(vcc[x], OUTPUT);
-        digitalWrite(vcc[x], HIGH);
-    }
-
-    for (byte x = 0; x < sizeof(gnd); x ++) {
-        pinMode(gnd[x], OUTPUT);
-        digitalWrite(gnd[x], LOW);
-    }
 
     pinMode(buzzer_pino, OUTPUT);
 
@@ -150,25 +180,34 @@ void setup() {
 
 void loop() {
     // Segue Linha
-    bool leituraD = sensorDireita.ler();
-    bool leituraE = sensorEsquerda.ler();
-    bool leituraXD = sensorExDireita.ler();
-    bool leituraXE = sensorExEsquerda.ler();
+    byte leituraXD = sensorExDireita.ler();
+    byte leituraD  = sensorDireita.ler();
+    byte leituraE  = sensorEsquerda.ler();
+    byte leituraXE = sensorExEsquerda.ler();
+
+    mostrar_leituras(leituraXD, leituraD, leituraE, leituraXE);
 
     if (leituraD == PRETO and leituraE == PRETO) {
-        motorDireita.ligar(LOW, HIGH, VELOCIDADE);
+        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
         motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
     }
     else if (leituraD == BRANCO and leituraE == PRETO) {
-        motorDireita.ligar(HIGH, LOW, VELOCIDADE);
+        motorDireita.ligar (HIGH, LOW, VELOCIDADE);
         motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
     }
     else if (leituraD == PRETO and leituraE == BRANCO) {
-        motorDireita.ligar(LOW, HIGH, VELOCIDADE);
+        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
         motorEsquerda.ligar(HIGH, LOW, VELOCIDADE);
     }
     else if (leituraD == BRANCO and leituraE == BRANCO) {
-        motorDireita.ligar(LOW, HIGH, VELOCIDADE);
+        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
         motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
     }
+}
+
+void mostrar_leituras (byte lxd, byte ld, byte le, byte lxe) {
+    Serial.print( "ExD: " ); Serial.print  (lxd);
+    Serial.print( "\tD: " ); Serial.print  (ld);
+    Serial.print( "\tE: " ); Serial.print  (le);
+    Serial.print("\tExE: "); Serial.println(lxe);
 }
