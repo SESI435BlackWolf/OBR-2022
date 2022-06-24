@@ -156,10 +156,12 @@ void setup() {
 
 void loop() {
     // Segue Linha
+    byte leituraXD = sensorExDireita.ler();
     byte leituraD = sensorDireita.ler();
     byte leituraE = sensorEsquerda.ler();
-    byte leituraXD = sensorExDireita.ler();
     byte leituraXE = sensorExEsquerda.ler();
+
+    mostrar_leituras (leituraXD, leituraD, leituraE, leituraXE);
 
     if (leituraD == PRETO and leituraE == PRETO) {
         motorDireita.ligar(LOW, HIGH, VELOCIDADE);
