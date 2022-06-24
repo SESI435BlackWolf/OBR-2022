@@ -5,7 +5,7 @@
 #define NTESTES 125
 #define PRETO 0
 #define BRANCO 1
-#define VELOCIDADE 90
+#define VELOCIDADE 120
 
 
 byte buzzer_pino = 2;
