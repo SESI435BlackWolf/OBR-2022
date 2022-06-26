@@ -141,44 +141,56 @@ void calibrar() {
 }
 
 void girar (bool direcao, int angulo, bool debug) {
-    motorDireita.ligar (LOW, LOW, 0);
-    motorEsquerda.ligar(LOW, LOW, 0);
+    motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
+    motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
+
+    mpu6050.update();
+    int anguloInicial = round(mpu6050.getAngleZ());
+    int anguloAlvo    = anguloInicial + (direcao? - angulo : angulo);
+    int leitura       = anguloInicial;
+
+    // Liga os motores
+    if (direcao == DIREITA) {
+        motorDireita.ligar (HIGH, LOW, VEL_GIRO);
+        motorEsquerda.ligar(LOW, HIGH, VEL_GIRO);
+    } else { // direcao == ESQUERDA
+        motorDireita.ligar (LOW, HIGH, VEL_GIRO);
+        motorEsquerda.ligar(HIGH, LOW, VEL_GIRO);
+    }
     
-    Wire.begin();
-    mpu6050.begin();
-    mpu6050.calcGyroOffsets(false);
-
-    do {
+    while (leitura != anguloAlvo) {
         mpu6050.update();
-        int leitura = abs(round(mpu6050.getAngleZ()));
+        leitura = round(mpu6050.getAngleZ());
         
-        if (debug) { Serial.println("Ang º: " + String(leitura) ); }
-        
-        if ((angulo - 1) < leitura < (angulo + 1)) {
-            break;
-        }
-        else if (direcao == DIREITA) {
-          motorDireita.ligar (HIGH, LOW, VEL_GIRO);
-          motorEsquerda.ligar(LOW, HIGH, VEL_GIRO);
-        } else {
-          motorDireita.ligar (LOW, HIGH, VEL_GIRO);
-          motorEsquerda.ligar(HIGH, LOW, VEL_GIRO);
-        }
-      
-    } while (true);
-
-    Wire.end();
+        if (debug) { Serial.print("Angulo: ", String(leitura)); }
+    }
+    
+    motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
+    motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
 }
 
 void setup() {
+    Wire.begin();
     Serial.begin(9600);
 
     pinMode(buzzer_pino, OUTPUT);
+
+    mpu6050.begin();
+    // Calibragem do giroscopio
+    tocar(1);
+    mpu6050.calcGyroOffsets(true); // delay de 3 s antes da calibragem e 3 s depois
+    tocar(0);
 
     calibrar();
 }
 
 void loop() {
+    mpu6050.update(); // Calcula o angulo do giroscopio
+    /* Dever ser chamado mesmo fora da função girar, pois se não, 
+     * o giroscopio pode perder o angulo e as leituras ficam di-
+     * ficeis de acompanhar.
+    */
+    
     // Segue Linha
     byte leituraXD = sensorExDireita.ler();
     byte leituraD  = sensorDireita.ler();
