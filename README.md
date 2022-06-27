@@ -11,4 +11,4 @@ Este é o projeto usado pela equipe de robótica do SESI-435 para o campeonato O
 MPU6050_tockn por [tockn](https://github.com/tockn)
 
 ### Instruções
-A instalação da biblioteca MPU6050_tockn pode ser feita tanto pelo github quanto pelo gerênciador de bibliotecas do Arduino IDE.
+A instalação da biblioteca MPU6050_tockn pode ser feita tanto pelo github quanto pelo gerenciador de bibliotecas do Arduino IDE.
