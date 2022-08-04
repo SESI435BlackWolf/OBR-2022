@@ -51,37 +51,42 @@ class Sensor {
 
 class Motor {
     private:
-        byte pinoPreto;
+        byte pinoMarrom;
         byte pinoBranco;
         byte pinoControle;
 
     public:
-        Motor(byte pP, byte pB, byte pC) {
-            this->pinoPreto    = pP;
+        Motor(byte pM, byte pB, byte pC) {
+            this->pinoMarrom   = pM;
             this->pinoBranco   = pB;
             this->pinoControle = pC;
 
-            pinMode(this->pinoPreto, OUTPUT);
+            pinMode(this->pinoMarrom, OUTPUT);
             pinMode(this->pinoBranco, OUTPUT);
             pinMode(this->pinoControle, OUTPUT);
         }
 
-        void ligar(bool pinoP, bool pinoB, byte velocidade) {
-            digitalWrite(pinoPreto, pinoP);
+        void ligar(bool pinoM, bool pinoB, byte velocidade) {
+            digitalWrite(pinoMarrom, pinoM);
             digitalWrite(pinoBranco, pinoB);
             analogWrite(pinoControle, velocidade);
         }
 };
 
-Motor motorDireita (22, 23, 13);
-Motor motorEsquerda(24, 25, 12);
+Motor motorDireita (52, 53, 12);    // Marrom (IN_1 ) : Branco (IN_2) : Laranja (EN_A)
+Motor motorEsquerda(50, 51, 13);    // Marrom (IN_3 ) : Branco (IN_4) : Laranja (EN_B)
 
-Sensor sensorExDireita (A0);
-Sensor sensorDireita   (A1);
-Sensor sensorEsquerda  (A2);
-Sensor sensorExEsquerda(A3);
+Sensor sensorExEsquerda(A0);    // Amarelo
+Sensor sensorEsquerda  (A1);    // Azul
+Sensor sensorDireita   (A2);    // Roxo
+Sensor sensorExDireita (A1);    // Verde
 
-MPU6050 mpu6050(Wire);
+Sensor sensorCorDireita (A4);
+Sensor sensorCorEsquerda(A5);
+
+/* @Giroscopio
+MPU6050 mpu6050(Wire);          // Giroscopio
+*/
 
 void calibrar() {
     Serial.println("========================================");
@@ -92,14 +97,14 @@ void calibrar() {
 
     // Calibragem Branco
     unsigned long media_brancoD  = 0;
-    unsigned long media_brancoDD = 0;
     unsigned long media_brancoE  = 0;
+    unsigned long media_brancoDD = 0;
     unsigned long media_brancoEE = 0;
 
     for (short teste = 1; teste <= NTESTES; teste++) {
         media_brancoD  += analogRead( sensorDireita.pinoEntrada    );
-        media_brancoDD += analogRead( sensorExDireita.pinoEntrada  );
         media_brancoE  += analogRead( sensorEsquerda.pinoEntrada   );
+        media_brancoDD += analogRead( sensorExDireita.pinoEntrada  );
         media_brancoEE += analogRead( sensorExEsquerda.pinoEntrada );
     }
 
@@ -115,31 +120,32 @@ void calibrar() {
 
     // Calibragem Preto
     unsigned long media_pretoD  = 0;
-    unsigned long media_pretoDD = 0;
     unsigned long media_pretoE  = 0;
+    unsigned long media_pretoDD = 0;
     unsigned long media_pretoEE = 0;
 
     for (short teste = 1; teste <= NTESTES; teste++) {
         media_pretoD  += analogRead( sensorDireita.pinoEntrada    );
-        media_pretoDD += analogRead( sensorExDireita.pinoEntrada  );
         media_pretoE  += analogRead( sensorEsquerda.pinoEntrada   );
+        media_pretoDD += analogRead( sensorExDireita.pinoEntrada  );
         media_pretoEE += analogRead( sensorExEsquerda.pinoEntrada );
     }
 
     sensorDireita.threshold    = round( (media_brancoD  + media_pretoD  ) / (NTESTES * 2));
-    sensorExDireita.threshold  = round( (media_brancoDD + media_pretoDD ) / (NTESTES * 2));
     sensorEsquerda.threshold   = round( (media_brancoE  + media_pretoE  ) / (NTESTES * 2));
+    sensorExDireita.threshold  = round( (media_brancoDD + media_pretoDD ) / (NTESTES * 2));
     sensorExEsquerda.threshold = round( (media_brancoEE + media_pretoEE ) / (NTESTES * 2));
 
     Serial.println("========================================");
     Serial.println("Sensor Direita     | " + String(sensorDireita.threshold));
-    Serial.println("Sensor Ex Direita  | " + String(sensorExDireita.threshold));
     Serial.println("Sensor Esquerda    | " + String(sensorEsquerda.threshold));
+    Serial.println("Sensor Ex Direita  | " + String(sensorExDireita.threshold));
     Serial.println("Sensor Ex Esquerda | " + String(sensorExEsquerda.threshold));
     Serial.println("========================================");
     tocar(0);
 }
 
+/* @Giroscopio
 void girar (bool direcao, int angulo, bool debug) {
     motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
     motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
@@ -168,27 +174,28 @@ void girar (bool direcao, int angulo, bool debug) {
     motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
     motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
 }
+*/
 
 void setup() {
-    Wire.begin();
-    Serial.begin(9600);
-
     pinMode(buzzer_pino, OUTPUT);
 
+    Serial.begin(9600);
+
+    /* @Giroscopio
+    Wire.begin();
     mpu6050.begin();
     // Calibragem do giroscopio
     tocar(1);
     mpu6050.calcGyroOffsets(true); // delay de 3 s antes da calibragem e 3 s depois
     tocar(0);
+    */
 
     calibrar();
 }
 
 void loop() {
+    /* @Giroscopio
     mpu6050.update(); // Calcula o angulo do giroscopio
-    /* Dever ser chamado mesmo fora da função girar, pois se não, 
-     * o giroscopio pode perder o angulo e as leituras ficam di-
-     * ficeis de acompanhar.
     */
     
     // Segue Linha
