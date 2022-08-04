@@ -12,3 +12,44 @@ MPU6050_tockn por [tockn](https://github.com/tockn)
 
 ### Instruções
 A instalação da biblioteca MPU6050_tockn pode ser feita tanto pelo github quanto pelo gerenciador de bibliotecas do Arduino IDE.
+
+## Giroscópio
+Como o giroscopio usado no robô queimou, decidimos manter os códigos do giroscópio nos arquivos, porém, comentados com `/* @Gisoscopio */`. Isso ocorre, pois, futuramente, compraremos outro, mas por hora, os trechos de código seriam inuteis e atrabalhariam o a performace do robô. Para voltar a utilia-los basta apagar os comentarios - apagando `/* Giroscopio` e `*/`, exemplo:
+
+```C++
+void setup() {
+    pinMode(buzzer_pino, OUTPUT);
+
+    Serial.begin(9600);
+
+    /* @Giroscopio    <--- Apagar
+    Wire.begin();
+    mpu6050.begin();
+    // Calibragem do giroscopio
+    tocar(1);
+    mpu6050.calcGyroOffsets(true); // delay de 3 s antes da calibragem e 3 s depois
+    tocar(0);
+    */    <--- Apagar 
+
+    calibrar();
+}
+```
+
+Ficaria:
+
+```C++
+void setup() {
+    pinMode(buzzer_pino, OUTPUT);
+
+    Serial.begin(9600);
+
+    Wire.begin();
+    mpu6050.begin();
+    // Calibragem do giroscopio
+    tocar(1);
+    mpu6050.calcGyroOffsets(true); // delay de 3 s antes da calibragem e 3 s depois
+    tocar(0);
+
+    calibrar();
+}
+```
