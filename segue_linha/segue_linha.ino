@@ -1,6 +1,7 @@
+/* @Giroscopio
 #include <MPU6050_tockn.h>
 #include <Wire.h>
-
+*/
 
 #define ESQUERDA   0
 #define DIREITA    1
