@@ -15,6 +15,12 @@
 
 byte buzzer_pino = 2;
 
+byte pinosEnergia[2] = {37, 35}; // Vermelhos
+/* Os cabos ligados no pinos digitais que não são da ponte H - os pinos da ponte H são
+ * os cabos brancos e marrons - são cabos de energia para os sensores e para o buzzer
+ * e devem ser ligados como positivo. Esses código é feito no setup().
+*/
+
 void tocar (bool musica) {
     if (musica) {
         for (int hz = 1400; hz >= 700; hz -= 100) {
@@ -179,6 +185,11 @@ void girar (bool direcao, int angulo, bool debug) {
 
 void setup() {
     pinMode(buzzer_pino, OUTPUT);
+
+    for (int i = 0; i < sizeof(pinosEnergia); i ++) {
+        pinMode(i, OUTPUT);
+        digitalWrite(i, HIGH);
+    }
 
     Serial.begin(9600);
 
