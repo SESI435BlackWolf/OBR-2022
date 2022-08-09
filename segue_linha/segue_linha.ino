@@ -86,7 +86,7 @@ Motor motorEsquerda(50, 51, 13);    // Marrom (IN_3 ) : Branco (IN_4) : Laranja 
 Sensor sensorExEsquerda(A0);    // Amarelo
 Sensor sensorEsquerda  (A1);    // Azul
 Sensor sensorDireita   (A2);    // Roxo
-Sensor sensorExDireita (A1);    // Verde
+Sensor sensorExDireita (A3);    // Verde
 
 Sensor sensorCorDireita (A4);
 Sensor sensorCorEsquerda(A5);
