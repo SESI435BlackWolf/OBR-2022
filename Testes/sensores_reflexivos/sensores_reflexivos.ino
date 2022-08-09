@@ -17,7 +17,7 @@ byte pinosEnergia[2] = {37, 35};
 Sensor sensorExEsquerda(A0);    // Amarelo
 Sensor sensorEsquerda  (A1);    // Azul
 Sensor sensorDireita   (A2);    // Roxo
-Sensor sensorExDireita (A1);    // Verde
+Sensor sensorExDireita (A3);    // Verde
 
 void setup() {
     Serial.begin(9600);
