@@ -12,6 +12,8 @@ class Sensor {
 };
 
 
+byte pinosEnergia[2] = {37, 35};
+
 Sensor sensorExEsquerda(A0);    // Amarelo
 Sensor sensorEsquerda  (A1);    // Azul
 Sensor sensorDireita   (A2);    // Roxo
@@ -19,7 +21,11 @@ Sensor sensorExDireita (A1);    // Verde
 
 void setup() {
     Serial.begin(9600);
-
+    
+    for (int i = 0; i < sizeof(pinosEnergia); i ++) {
+        pinMode(i, OUTPUT);
+        digitalWrite(i, HIGH);
+    }
 }
 
 void loop() {
