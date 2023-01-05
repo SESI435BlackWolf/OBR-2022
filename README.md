@@ -67,13 +67,13 @@ ser comitado no repositório, ademais o .gitignore o ignora por padrão. Não co
 
 
 ## Comtribuindo e o que falta
-- [x] (Motores)
-- [x] (Sensores reflexivos)
-- [x] (Segue linha basico)
-- [x] (Giroscópio)
-- [ ] (Sensor de cor)
-- [ ] (Segue linha completo)
-- [ ] (Sensor ultrassônico)
-- [ ] (Desvio da caixa)
+- [x] Motores
+- [x] Sensores reflexivos
+- [x] Segue linha basico
+- [x] Giroscópio
+- [ ] Sensor de cor
+- [ ] Segue linha completo
+- [ ] Sensor ultrassônico
+- [ ] Desvio da caixa
 
 Essa lista mudará conforme for finalizada.
