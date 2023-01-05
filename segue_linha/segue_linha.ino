@@ -153,7 +153,7 @@ void calibrar() {
 }
 
 /* @Giroscopio
-void girar (bool direcao, int angulo, bool debug) {
+void girar (bool direcao, int angulo) {
     motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
     motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
 
@@ -175,7 +175,9 @@ void girar (bool direcao, int angulo, bool debug) {
         mpu6050.update();
         leitura = round(mpu6050.getAngleZ());
         
-        if (debug) { Serial.print("Angulo: ", String(leitura)); }
+    
+        Serial.print("Angulo: ", String(leitura));
+    
     }
     
     motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
@@ -216,7 +218,10 @@ void loop() {
     byte leituraE  = sensorEsquerda.ler();
     byte leituraXE = sensorExEsquerda.ler();
 
-    mostrar_leituras(leituraXD, leituraD, leituraE, leituraXE);
+    Serial.print( "ExD: " ); Serial.print  (leituraXD);
+    Serial.print( "\tD: " ); Serial.print  (leituraD);
+    Serial.print( "\tE: " ); Serial.print  (leituraE);
+    Serial.print("\tExE: "); Serial.println(leituraXE);
 
     if (leituraD == PRETO and leituraE == PRETO) {
         motorDireita.ligar (LOW, HIGH, VELOCIDADE);
@@ -234,11 +239,4 @@ void loop() {
         motorDireita.ligar (LOW, HIGH, VELOCIDADE);
         motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
     }
-}
-
-void mostrar_leituras (byte lxd, byte ld, byte le, byte lxe) {
-    Serial.print( "ExD: " ); Serial.print  (lxd);
-    Serial.print( "\tD: " ); Serial.print  (ld);
-    Serial.print( "\tE: " ); Serial.print  (le);
-    Serial.print("\tExE: "); Serial.println(lxe);
 }
