@@ -1,1 +1,8 @@
+# Arquivos ocultos
+.*
+
+# Extenções
 *.pdf
+
+# Arquivos expecíficos
+no_debug/no_debug.ino

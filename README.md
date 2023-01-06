@@ -53,3 +53,30 @@ void setup() {
     calibrar();
 }
 ```
+
+## Usando debug_remover:
+Use debug_remover para remover todos os `Serial.*` do arquivo segue_linha. 
+Isso removerá todos os debugs de `Seral.print`, mas manterá os códigos do buzzer.
+Ao final o arquivo sem debugs via serial estará no diretório `./no_debug` com o 
+nome de arquivo `no_debug.ino`.
+Para executar debug_remover vá à raiz do repositório pelo terminal e copie o comando:
+
+```
+python ./Scripts/debug_remover.py
+```
+
+O arquivo `no_debug.ino` não é para ser trabalhado e sim o segue_linha. e tmb não precisa
+ser comitado no repositório, ademais o .gitignore o ignora por padrão. Não commite `no_debug.ino`!
+
+
+## Comtribuindo e o que falta
+- [x] Motores
+- [x] Sensores reflexivos
+- [x] Segue linha basico
+- [x] Giroscópio
+- [ ] Sensor de cor
+- [ ] Segue linha completo
+- [ ] Sensor ultrassônico
+- [ ] Desvio da caixa
+
+Essa lista mudará conforme for finalizada.
