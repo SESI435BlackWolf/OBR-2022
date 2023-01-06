@@ -1,3 +1,8 @@
+import os
+
+if os.path.exists("./no_debug/") == False:
+    os.mkdir("./no_debug/")
+
 file = "./segue_linha/segue_linha.ino"
 new_file = "./no_debug/no_debug.ino"
 
