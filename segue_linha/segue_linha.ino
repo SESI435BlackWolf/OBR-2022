@@ -12,8 +12,8 @@
 #define VELOCIDADE 120
 #define VEL_GIRO   90
 
+#define BUZZER = 2;
 
-byte buzzer_pino = 2;
 
 byte pinosEnergia[2] = {37, 35}; // Vermelhos
 /* Os cabos ligados no pinos digitais que não são da ponte H - os pinos da ponte H são
@@ -24,21 +24,21 @@ byte pinosEnergia[2] = {37, 35}; // Vermelhos
 void tocar (bool musica) {
     if (musica) {
         for (int hz = 1400; hz >= 700; hz -= 100) {
-            tone(buzzer_pino, hz, 200);
+            tone(BUZZER, hz, 200);
             delay(250);
-            noTone(buzzer_pino);
+            noTone(BUZZER);
         }
         delay(100);
     }
     else {
         for (byte x = 0; x < 3; x ++) {
-            tone(buzzer_pino, 500, 300);
+            tone(BUZZER, 500, 300);
             delay(400);
-            tone(buzzer_pino, 3000, 300);
+            tone(BUZZER, 3000, 300);
             delay(400);
         }
     }
-    noTone(buzzer_pino);
+    noTone(BUZZER);
 }
 
 class Sensor {
@@ -186,7 +186,7 @@ void girar (bool direcao, int angulo) {
 */
 
 void setup() {
-    pinMode(buzzer_pino, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
 
     for (int i = 0; i < sizeof(pinosEnergia); i ++) {
         pinMode(i, OUTPUT);
