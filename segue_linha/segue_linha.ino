@@ -12,14 +12,10 @@
 #define VELOCIDADE 120
 #define VEL_GIRO   90
 
-#define BUZZER = 2;
+#define BUZZER = 2
+#define VDD_OUT1 = 37
+#define VDD_OUT2 = 35
 
-
-byte pinosEnergia[2] = {37, 35}; // Vermelhos
-/* Os cabos ligados no pinos digitais que não são da ponte H - os pinos da ponte H são
- * os cabos brancos e marrons - são cabos de energia para os sensores e para o buzzer
- * e devem ser ligados como positivo. Esses código é feito no setup().
-*/
 
 void tocar (bool musica) {
     if (musica) {
@@ -80,8 +76,8 @@ class Motor {
         }
 };
 
-Motor motorDireita (52, 53, 12);    // Marrom (IN_1 ) : Branco (IN_2) : Laranja (EN_A)
-Motor motorEsquerda(50, 51, 13);    // Marrom (IN_3 ) : Branco (IN_4) : Laranja (EN_B)
+Motor motorDireita (52, 53, 12);    // Marrom (IN_1) : Branco (IN_2) : Laranja (EN_A)
+Motor motorEsquerda(50, 51, 13);    // Marrom (IN_3) : Branco (IN_4) : Laranja (EN_B)
 
 Sensor sensorExEsquerda(A0);    // Amarelo
 Sensor sensorEsquerda  (A1);    // Azul
@@ -188,10 +184,11 @@ void girar (bool direcao, int angulo) {
 void setup() {
     pinMode(BUZZER, OUTPUT);
 
-    for (int i = 0; i < sizeof(pinosEnergia); i ++) {
-        pinMode(i, OUTPUT);
-        digitalWrite(i, HIGH);
-    }
+    pinMode(VDD_OUT1, OUTPUT);
+    pinMode(VDD_OUT2, OUTPUT);
+
+    digitalWrite(VDD_OUT1, HIGH);
+    digitalWrite(VDD_OUT2, HIGH);
 
     Serial.begin(9600);
 
