@@ -3,6 +3,7 @@
 #include <Wire.h>
 */
 
+#pragma region // Aliases
 // Motor direction aliases
 #define FRENTE 1
 #define RE    -1
@@ -20,34 +21,11 @@
 #define NTESTES    125
 #define VELOCIDADE 120
 #define VEL_GIRO   90
+#pragma endregion
 
-byte buzzer_pino = 2;
-
-byte pinosEnergia[2] = {37, 35}; // Vermelhos
-/* Os cabos ligados no pinos digitais que não são da ponte H - os pinos da ponte H são
- * os cabos brancos e marrons - são cabos de energia para os sensores e para o buzzer
- * e devem ser ligados como positivo. Esses código é feito no setup().
-*/
-
-void tocar (bool musica) {
-    if (musica) {
-        for (int hz = 1400; hz >= 700; hz -= 100) {
-            tone(buzzer_pino, hz, 200);
-            delay(250);
-            noTone(buzzer_pino);
-        }
-        delay(100);
-    }
-    else {
-        for (byte x = 0; x < 3; x ++) {
-            tone(buzzer_pino, 500, 300);
-            delay(400);
-            tone(buzzer_pino, 3000, 300);
-            delay(400);
-        }
-    }
-    noTone(buzzer_pino);
-}
+#pragma region // Componets
+// Buzer
+#define buzzer_pino 2
 
 #pragma region // @Sensor
 struct Sensor {
@@ -193,6 +171,7 @@ void girar (bool direcao, int angulo) {
     controlar_robo(PARA, PARA, 0);
 }
 */
+#pragma endregion
 
 void setup() {
     #pragma region // Sensor's pins
@@ -217,20 +196,14 @@ void setup() {
     motorEsquerda.pino_velocidade = 12;  // Laranja EN_A
     #pragma endregion
 
-    byte output_pins[6] = {12, 13, 50, 51, 52, 53};
+    byte output_pins[7] = {buzzer_pino, 12, 13, 50, 51, 52, 53};
 
     for (int i = 0; i < sizeof(output_pins); i ++) {
         pinMode(output_pins[i], OUTPUT);
         digitalWrite(output_pins[i], LOW);
     }
 
-    pinMode(buzzer_pino, OUTPUT);
-
-    for (int i = 0; i < sizeof(pinosEnergia); i ++) {
-        pinMode(pinosEnergia[i], OUTPUT);
-        digitalWrite(pinosEnergia[i], HIGH);
-    }
-
+    // debug
     Serial.begin(9600);
 
     /* @Giroscopio
@@ -254,6 +227,7 @@ void loop() {
     bool leituraE  = ler_sensor(&sensorEsquerda);
     bool leituraXE = ler_sensor(&sensorExEsquerda);
 
+    // debug
     Serial.print( "ExD: " ); Serial.print  (leituraXD);
     Serial.print( "\tD: " ); Serial.print  (leituraD);
     Serial.print( "\tE: " ); Serial.print  (leituraE);
@@ -271,4 +245,24 @@ void loop() {
     else if (leituraD == BRANCO and leituraE == BRANCO) {
         controlar_robo(FRENTE, FRENTE, VELOCIDADE);
     }
+}
+
+void tocar(bool musica) {
+    if (musica) {
+        for (int hz = 1400; hz >= 700; hz -= 100) {
+            tone(buzzer_pino, hz, 200);
+            delay(250);
+            noTone(buzzer_pino);
+        }
+        delay(100);
+    }
+    else {
+        for (byte x = 0; x < 3; x ++) {
+            tone(buzzer_pino, 500, 300);
+            delay(400);
+            tone(buzzer_pino, 3000, 300);
+            delay(400);
+        }
+    }
+    noTone(buzzer_pino);
 }
