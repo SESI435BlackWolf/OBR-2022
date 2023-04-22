@@ -3,6 +3,10 @@
 #include <Wire.h>
 */
 
+// Motor directions
+#define FRENTE 1
+#define RE    -1
+
 #define ESQUERDA   0
 #define DIREITA    1
 #define PRETO      0
@@ -56,32 +60,35 @@ class Sensor {
         }
 };
 
-class Motor {
-    private:
-        byte pinoMarrom;
-        byte pinoBranco;
-        byte pinoControle;
-
-    public:
-        Motor(byte pM, byte pB, byte pC) {
-            this->pinoMarrom   = pM;
-            this->pinoBranco   = pB;
-            this->pinoControle = pC;
-
-            pinMode(this->pinoMarrom, OUTPUT);
-            pinMode(this->pinoBranco, OUTPUT);
-            pinMode(this->pinoControle, OUTPUT);
-        }
-
-        void ligar(bool pinoM, bool pinoB, byte velocidade) {
-            digitalWrite(pinoMarrom, pinoM);
-            digitalWrite(pinoBranco, pinoB);
-            analogWrite(pinoControle, velocidade);
-        }
+// @Motor
+struct Motor {
+    byte pinoControle_1 = 0;
+    byte pinoControle_2 = 0;
+    byte pinoVelocidade = 0;
 };
 
-Motor motorDireita (52, 53, 12);    // Marrom (IN_1 ) : Branco (IN_2) : Laranja (EN_A)
-Motor motorEsquerda(50, 51, 13);    // Marrom (IN_3 ) : Branco (IN_4) : Laranja (EN_B)
+struct Motor motorDireita;
+struct Motor motorEsquerda;
+
+void controlar_robo (byte roda_direita, byte roda_esquerda, byte velocidade) {
+    // debug
+    Serial.print("Controlar Robo:");
+    Serial.print(" direita: " + String(roda_direita));
+    Serial.print(" esquerda: " + String(roda_esquerda));
+    Serial.print(" velocidade: " + String(velocidade));
+
+    // liga o motor da direita
+    digitalWrite(motorDireita.pinoControle_1, roda_direita == RE? HIGH : LOW);
+    digitalWrite(motorDireita.pinoControle_2, roda_direita == FRENTE? HIGH : LOW);
+
+    // liga o motor da esquerda
+    digitalWrite(motorEsquerda.pinoControle_1, roda_esquerda == RE? HIGH : LOW);
+    digitalWrite(motorEsquerda.pinoControle_2, roda_esquerda == FRENTE? HIGH : LOW);
+
+    // controla a velocidade
+    analogWrite(motorDireita.pinoVelocidade, velocidade);
+    analogWrite(motorEsquerda.pinoVelocidade, velocidade);
+}
 
 Sensor sensorExEsquerda(A0);    // Amarelo
 Sensor sensorEsquerda  (A1);    // Azul
@@ -186,11 +193,26 @@ void girar (bool direcao, int angulo) {
 */
 
 void setup() {
+    byte output_pins[6] = {12, 13, 50, 51, 52, 53};
+
+    for (int i = 0; i < sizeof(output_pins); i ++) {
+        pinMode(output_pins[i], OUTPUT);
+        digitalWrite(output_pins[i], HIGH);
+    }
+
     pinMode(buzzer_pino, OUTPUT);
 
+    motorDireita.pinoControle_1 = 52;  // Marrom: IN_1
+    motorDireita.pinoControle_2 = 53;  // Branco: IN_3
+    motorDireita.pinoVelocidade = 13;  // Laranja EN_A
+
+    motorEsquerda.pinoControle_1 = 50;  // Marrom: IN_1
+    motorEsquerda.pinoControle_2 = 51;  // Branco: IN_3
+    motorEsquerda.pinoVelocidade = 12;  // Laranja EN_A
+
     for (int i = 0; i < sizeof(pinosEnergia); i ++) {
-        pinMode(i, OUTPUT);
-        digitalWrite(i, HIGH);
+        pinMode(pinosEnergia[i], OUTPUT);
+        digitalWrite(pinosEnergia[i], HIGH);
     }
 
     Serial.begin(9600);
@@ -224,19 +246,15 @@ void loop() {
     Serial.print("\tExE: "); Serial.println(leituraXE);
 
     if (leituraD == PRETO and leituraE == PRETO) {
-        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
-        motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
+        controlar_robo(FRENTE, FRENTE, VELOCIDADE);
     }
     else if (leituraD == BRANCO and leituraE == PRETO) {
-        motorDireita.ligar (HIGH, LOW, VELOCIDADE);
-        motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
+        controlar_robo(RE, FRENTE, VELOCIDADE);
     }
     else if (leituraD == PRETO and leituraE == BRANCO) {
-        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
-        motorEsquerda.ligar(HIGH, LOW, VELOCIDADE);
+        controlar_robo(FRENTE, RE, VELOCIDADE);
     }
     else if (leituraD == BRANCO and leituraE == BRANCO) {
-        motorDireita.ligar (LOW, HIGH, VELOCIDADE);
-        motorEsquerda.ligar(LOW, HIGH, VELOCIDADE);
+        controlar_robo(FRENTE, FRENTE, VELOCIDADE);
     }
 }
