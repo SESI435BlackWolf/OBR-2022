@@ -9,9 +9,11 @@
 #define RE    -1
 #define PARA   0
 
+/* @Giroscopio
 // Giroscope direction aliases
 #define ANTI_HORARIO  1
 #define HORARIO 0
+*/
 
 // Sensor aliases
 #define PRETO      0
