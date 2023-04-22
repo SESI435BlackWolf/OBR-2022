@@ -6,6 +6,7 @@
 // Motor directions
 #define FRENTE 1
 #define RE    -1
+#define PARA   0
 
 #define ESQUERDA   0
 #define DIREITA    1
@@ -161,34 +162,31 @@ void calibrar() {
 
 /* @Giroscopio
 void girar (bool direcao, int angulo) {
-    motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
-    motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
+    // Para o Robo
+    controlar_robo(PARA, PARA, 0);
 
     mpu6050.update();
     int anguloInicial = round(mpu6050.getAngleZ());
     int anguloAlvo    = anguloInicial + (direcao? - angulo : angulo);
     int leitura       = anguloInicial;
 
-    // Liga os motores
-    if (direcao == DIREITA) {
-        motorDireita.ligar (HIGH, LOW, VEL_GIRO);
-        motorEsquerda.ligar(LOW, HIGH, VEL_GIRO);
-    } else { // direcao == ESQUERDA
-        motorDireita.ligar (LOW, HIGH, VEL_GIRO);
-        motorEsquerda.ligar(HIGH, LOW, VEL_GIRO);
+    // Gira o Robo
+    if (direcao == DIREITA) { // Gira para direita
+        controlar_robo(RE, FRENTE, VEL_GIRO);
+    } else { // Gira para esquerda
+        controlar_robo(FRENTE, RE, VEL_GIRO);
     }
     
     while (leitura != anguloAlvo) {
         mpu6050.update();
         leitura = round(mpu6050.getAngleZ());
-        
     
-        Serial.print("Angulo: ", String(leitura));
+        Serial.print("Angulo: " + String(leitura));
     
     }
     
-    motorDireita.ligar (LOW, LOW, 0); // Desliga o motor direito
-    motorEsquerda.ligar(LOW, LOW, 0); // Desliga o motor esquerdo
+    // Para o Robo
+    controlar_robo(PARA, PARA, 0);
 }
 */
 
