@@ -9,7 +9,7 @@ new_file = "./no_debug/no_debug.ino"
 with open(file) as segue_linha_debug:
     with open(new_file, "w") as segue_linha:
         for line in segue_linha_debug:
-            if "Serial." in line:
+            if "Serial." in line or "// debug" in line:
                 continue
             else:
                 segue_linha.write(line)
