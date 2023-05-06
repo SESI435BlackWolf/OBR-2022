@@ -19,6 +19,7 @@ class Motor {
         }
 
     void ligar(bool pinoM, bool pinoB, byte velocidade) {
+
             Serial.println("Pino Marrom:  (" + String(pinoM) + ")\t\t\t" + String(pinoM? HIGH : LOW));
             Serial.println("Pino Branco:  (" + String(pinoB) + ")\t\t\t" + String(pinoB? HIGH : LOW));
             Serial.println("Pino Laranja: (" + String(velocidade) + ")\t\t\t" + String(velocidade));
@@ -42,7 +43,7 @@ void loop() {
     Serial.println("Motor direita -> Frente:");
     motorDireita.ligar(LOW, HIGH, 255);
     delay(DELAY);
-
+    
     Serial.println("Motor Esquerda -> Frente:");
     motorEsquerda.ligar(LOW, HIGH, 255);
     delay(DELAY);
